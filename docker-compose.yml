@@ -1,0 +1,24 @@
+
+services:
+  db: 
+    image: postgis/postgis:16-3.5-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - ~/radius/postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=radius
+  freeradius:
+    container_name: freeradius
+    build: .
+    command: -X
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "1812:1812/udp"
+      - "1813:1813/udp"
+    # volumes:
+      # - ./radius-config:/etc/raddb
+    restart: unless-stopped

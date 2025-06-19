@@ -1,0 +1,126 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model nas {
+  id                Int     @id @default(autoincrement())
+  nasname           String
+  shortname         String
+  type              String  @default("other")
+  ports             Int?
+  secret            String
+  server            String?
+  community         String?
+  description       String?
+  require_ma        String  @default("auto")
+  limit_proxy_state String  @default("auto")
+
+  @@index([nasname], map: "nas_nasname")
+}
+
+model nasreload {
+  nasipaddress String   @id @db.Inet
+  reloadtime   DateTime @db.Timestamptz(6)
+}
+
+/// This model contains an index with non-default null sort order and requires additional setup for migrations. Visit https://pris.ly/d/default-index-null-ordering for more info.
+model radacct {
+  radacctid           BigInt    @id @default(autoincrement())
+  acctsessionid       String
+  acctuniqueid        String    @unique
+  username            String?
+  groupname           String?
+  realm               String?
+  nasipaddress        String    @db.Inet
+  nasportid           String?
+  nasporttype         String?
+  acctstarttime       DateTime? @db.Timestamptz(6)
+  acctupdatetime      DateTime? @db.Timestamptz(6)
+  acctstoptime        DateTime? @db.Timestamptz(6)
+  acctinterval        BigInt?
+  acctsessiontime     BigInt?
+  acctauthentic       String?
+  connectinfo_start   String?
+  connectinfo_stop    String?
+  acctinputoctets     BigInt?
+  acctoutputoctets    BigInt?
+  calledstationid     String?
+  callingstationid    String?
+  acctterminatecause  String?
+  servicetype         String?
+  framedprotocol      String?
+  framedipaddress     String?   @db.Inet
+  framedipv6address   String?   @db.Inet
+  framedipv6prefix    String?   @db.Inet
+  framedinterfaceid   String?
+  delegatedipv6prefix String?   @db.Inet
+  class               String?
+
+  @@index([acctstoptime, acctupdatetime], map: "radacct_bulk_timeout")
+  @@index([acctstarttime, username], map: "radacct_start_user_idx")
+}
+
+model radcheck {
+  id        Int    @id @default(autoincrement())
+  username  String @default("")
+  attribute String @default("")
+  op        String @default("==") @db.VarChar(2)
+  value     String @default("")
+
+  @@index([username, attribute], map: "radcheck_username")
+}
+
+model radgroupcheck {
+  id        Int    @id @default(autoincrement())
+  groupname String @default("")
+  attribute String @default("")
+  op        String @default("==") @db.VarChar(2)
+  value     String @default("")
+
+  @@index([groupname, attribute], map: "radgroupcheck_groupname")
+}
+
+model radgroupreply {
+  id        Int    @id @default(autoincrement())
+  groupname String @default("")
+  attribute String @default("")
+  op        String @default("=") @db.VarChar(2)
+  value     String @default("")
+
+  @@index([groupname, attribute], map: "radgroupreply_groupname")
+}
+
+model radpostauth {
+  id               BigInt   @id @default(autoincrement())
+  username         String
+  pass             String?
+  reply            String?
+  calledstationid  String?
+  callingstationid String?
+  authdate         DateTime @default(now()) @db.Timestamptz(6)
+  class            String?
+}
+
+model radreply {
+  id        Int    @id @default(autoincrement())
+  username  String @default("")
+  attribute String @default("")
+  op        String @default("=") @db.VarChar(2)
+  value     String @default("")
+
+  @@index([username, attribute], map: "radreply_username")
+}
+
+model radusergroup {
+  id        Int    @id @default(autoincrement())
+  username  String @default("")
+  groupname String @default("")
+  priority  Int    @default(0)
+
+  @@index([username], map: "radusergroup_username")
+}
