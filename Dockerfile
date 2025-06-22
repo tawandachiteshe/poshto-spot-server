@@ -1,5 +1,5 @@
 
-FROM freeradius/freeradius-dev:latest
+FROM freeradius/freeradius-dev:v3.2.x
 RUN apt-get update && apt-get install -y \
     freeradius \
     freeradius-postgresql \
