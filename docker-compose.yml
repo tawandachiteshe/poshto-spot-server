@@ -6,10 +6,7 @@ services:
     command: -X
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    ports:
-      - "1812:1812/udp"
-      - "1813:1813/udp"
-    # volumes:
+       # volumes:
       # - ./radius-config:/etc/raddb
     restart: unless-stopped
     networks:
