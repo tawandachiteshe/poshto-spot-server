@@ -7,9 +7,7 @@ RUN apt-get update && apt-get install -y \
     postgresql-client \
     postgresql \
     libpq5 \
-    && ldconfig \
-    && rm -rf /var/lib/apt/lists/*
-
+    && ldconfig 
 RUN ldd /usr/lib/freeradius/rlm_sql_postgresql.so
 RUN whoami
 COPY raddb/ /etc/raddb/
