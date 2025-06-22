@@ -12,3 +12,8 @@ services:
     # volumes:
       # - ./radius-config:/etc/raddb
     restart: unless-stopped
+    networks:
+      - bans-network
+networks:
+  bans-network:
+    external: true
