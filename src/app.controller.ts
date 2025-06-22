@@ -6,7 +6,15 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  getHello(): any {
+    console.log('Hello World!');
+
+    return {
+      allow: true,
+      timeout: 3600,
+      up: 524288,
+      down: 2097152,
+      message: 'Access granted by remote FAS',
+    };
   }
 }

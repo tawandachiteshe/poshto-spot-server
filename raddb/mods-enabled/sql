@@ -92,7 +92,7 @@ sql {
 	#  .Connection info:
 	#
 	server = "db"
-	port = 5432
+	port = 5433
 	login = "postgres"
 	password = "password"
 
