@@ -91,17 +91,17 @@ sql {
 	#
 	#  .Connection info:
 	#
-	server = "db"
+	server = "testingdb"
 	port = 5433
 	login = "postgres"
-	password = "password"
+	password = "NgR~L29W]7*["
 
 	#
 	#  radius_db:: Database table configuration for everything.
 	#
 	#  WARNING: Except for Oracle database.
 	#
-	radius_db = "radius"
+	# radius_db = "radius"
 
 	#
 	#  .If you are using `Oracle` then use this instead.
