@@ -93,8 +93,8 @@ sql {
 	#
 	server = "testingdb"
 	port = 5432
-	login = "radius"
-	password = "radpass"
+	login = "postgres"
+	password = "NgR~L29W]7*["
 
 	#
 	#  radius_db:: Database table configuration for everything.
