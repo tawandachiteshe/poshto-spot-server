@@ -1,19 +1,17 @@
-
-services:
-  freeradius:
-    container_name: freeradius
+services: 
+  portal-web:
+    restart: always
     build: .
-    command: -X
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    ports:
-      - "1812:1812/udp"
-      - "1813:1813/udp"
-    # volumes:
-      # - ./radius-config:/etc/raddb
-    restart: unless-stopped
+    environment:
+      - ./env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.portal-backend.rule=Host(`portal-backend.umbiro.com`)"
+      - "traefik.http.routers.portal-backend.entrypoints=websecure"
+      - "traefik.http.routers.portal-backend.tls.certresolver=myresolver"
+      - "traefik.http.services.portal-backend.loadbalancer.server.port=3005"
     networks:
-      - bans-network
+        - bans-network
 networks:
   bans-network:
     external: true

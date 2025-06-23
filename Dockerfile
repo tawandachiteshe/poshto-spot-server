@@ -1,15 +1,19 @@
+FROM node:23-alpine3.20
+LABEL authors="xbeef"
 
-FROM freeradius/freeradius-dev:v3.2.x
-RUN apt-get update && apt-get install -y \
-    freeradius \
-    freeradius-postgresql \
-    libpq-dev \
-    postgresql-client \
-    postgresql \
-    libpq5 \
-    && ldconfig \
-    && rm -rf /var/lib/apt/lists/*
+WORKDIR /usr/src/app
 
-RUN ldd /usr/lib/freeradius/rlm_sql_postgresql.so
-RUN whoami
-COPY raddb/ /etc/raddb/
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+EXPOSE 3005
+
+RUN npx prisma generate
+
+
+RUN npm run build
+
+CMD ["npm", "run", "start:prod"]
