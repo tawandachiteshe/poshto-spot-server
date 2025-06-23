@@ -186,12 +186,6 @@ export class AppService {
             op: ':=',
             value: code,
           },
-          {
-            username: code,
-            attribute: 'Expiration',
-            op: ':=',
-            value: expiration.toISOString().slice(0, 19).replace('T', ' '), // Format: 'YYYY-MM-DD HH:MM:SS'
-          },
         ],
       });
 
@@ -202,12 +196,6 @@ export class AppService {
             attribute: 'Session-Timeout',
             op: ':=',
             value: sessionInSeconds.toString(), // 1 hour in seconds
-          },
-          {
-            username: code,
-            attribute: 'Expiration',
-            op: ':=',
-            value: expiration.toISOString().slice(0, 19).replace('T', ' '), // Format: 'YYYY-MM-DD HH:MM:SS'
           },
           {
             username: code,
