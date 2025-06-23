@@ -41,9 +41,17 @@ export class AppController {
       BigInt(usage._sum.acctinputoctets || 0) +
       BigInt(usage._sum.acctoutputoctets || 0);
 
+    const voucher = await this.prisma.voucher.findFirst({
+      where: { code: username },
+    });
+
+    if (!voucher) return;
+
     return {
       username,
       usedData: usedData.toString(),
+      dataLeft: (voucher.dataCapBytes - usedData).toString(),
+      dataCap: voucher.dataCapBytes.toString(),
       sessionTime: usage._sum.acctsessiontime?.toString() || '0',
       lastSeen: usage._max.acctstarttime?.toString(),
     };

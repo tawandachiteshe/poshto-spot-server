@@ -4,7 +4,7 @@ import { CreateVoucherDto } from './dto/CreateVoucher.dto';
 import { Prisma } from '@prisma/client';
 import { addDays } from 'date-fns';
 import * as dayjs from 'dayjs';
-import { Cron } from '@nestjs/schedule';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class AppService {
@@ -58,6 +58,43 @@ export class AppService {
       }
     }
   }
+
+  @Cron(CronExpression.EVERY_10_MINUTES) // or EVERY_HOUR / EVERY_DAY_AT_MIDNIGHT
+  async invalidateExpiredVouchers(): Promise<void> {
+    const now = new Date();
+
+    const result = await this.prisma.voucher.updateMany({
+      where: {
+        isActive: true,
+        expiry: { lt: now },
+      },
+      data: {
+        isActive: false,
+      },
+    });
+
+    if (result.count > 0) {
+      this.logger.log(`⛔ Invalidated ${result.count} expired vouchers`);
+    }
+
+    const expiredVouchers = await this.prisma.voucher.findMany({
+      where: {
+        isActive: false,
+        expiry: { lt: now },
+      },
+      select: { code: true },
+    });
+
+    await Promise.all(
+      expiredVouchers.map((v) =>
+        this.prisma.radcheck.updateMany({
+          where: { username: v.code },
+          data: { attribute: 'Auth-Type', op: ':=', value: 'Reject' },
+        }),
+      ),
+    );
+  }
+
   @Cron('*/10 * * * *') // Every 10 minutes
   async disableUsedUpVouchers() {
     this.logger.log('Checking vouchers that exceeded Session-Timeout...');
