@@ -301,7 +301,8 @@ listen {
 #  Make *sure* that 'preprocess' comes before any realm if you
 #  need to setup hints for the remote radius server
 authorize {
-	#
+	sql
+  #
 	#  Take a User-Name, and perform some checks on it, for spaces and other
 	#  invalid characters.  If the User-Name appears invalid, reject the
 	#  request.
@@ -457,7 +458,6 @@ authorize {
 	#  is meant to mirror the "users" file.
 	#
 	#  See "Authorization Queries" in mods-available/sql
-	sql
 
 	#
 	#  If you are using /etc/smbpasswd, and are also doing
