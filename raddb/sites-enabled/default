@@ -319,7 +319,7 @@ authorize {
 	#
 	#  This policy will fix it to just be "password".
 	#
-#	filter_password
+  filter_password
 
 	#
 	#  The preprocess module takes care of sanitizing some bizarre
