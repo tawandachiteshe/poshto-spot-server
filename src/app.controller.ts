@@ -44,8 +44,8 @@ export class AppController {
     return {
       username,
       usedData: usedData.toString(),
-      sessionTime: usage._sum.acctsessiontime || 0,
-      lastSeen: usage._max.acctstarttime,
+      sessionTime: usage._sum.acctsessiontime?.toString() || '0',
+      lastSeen: usage._max.acctstarttime?.toString(),
     };
   }
 
