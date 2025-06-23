@@ -124,3 +124,15 @@ model radusergroup {
 
   @@index([username], map: "radusergroup_username")
 }
+
+model Voucher {
+  id             Int      @id @default(autoincrement())
+  code           String   @unique
+  dataCapBytes   BigInt
+  price          Float
+  timeCapSeconds Int      @default(3600)
+  isActive       Boolean  @default(true)
+  expiry         DateTime @default(now())
+  expiryDays     Int      @default(0)
+  createdAt      DateTime @default(now())
+}
