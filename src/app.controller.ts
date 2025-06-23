@@ -54,6 +54,7 @@ export class AppController {
       dataCap: voucher.dataCapBytes.toString(),
       sessionTime: usage._sum.acctsessiontime?.toString() || '0',
       lastSeen: usage._max.acctstarttime?.toString(),
+      expiryDate: voucher.expiry.toString(),
     };
   }
 
