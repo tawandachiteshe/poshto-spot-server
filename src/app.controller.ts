@@ -77,8 +77,8 @@ export class AppController {
           isActive: v.isActive,
           dataCap: v.dataCapBytes.toString(),
           usedData: usedData.toString(),
-          timeCap: v.timeCapSeconds,
-          usedTime,
+          timeCap: v.timeCapSeconds.toString(),
+          usedTime: usedTime.toString(),
           status:
             !v.isActive ||
             usedData >= BigInt(v.dataCapBytes) ||
