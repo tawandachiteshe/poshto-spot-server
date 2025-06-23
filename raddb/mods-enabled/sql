@@ -101,7 +101,7 @@ sql {
 	#
 	#  WARNING: Except for Oracle database.
 	#
-	# radius_db = "radius"
+	radius_db = "radius"
 
 	#
 	#  .If you are using `Oracle` then use this instead.
