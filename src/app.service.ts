@@ -2,15 +2,65 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
 import { CreateVoucherDto } from './dto/CreateVoucher.dto';
 import { Prisma } from '@prisma/client';
-import { addDays } from 'date-fns';
 import * as dayjs from 'dayjs';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { CreateVoucherBatchDto } from './dto/VoucherBatchDto';
 
 @Injectable()
 export class AppService {
   constructor(private prisma: PrismaService) {}
 
   private readonly logger = new Logger(AppService.name);
+
+  async createBatch(dto: CreateVoucherBatchDto) {
+    try {
+      const voucherBatch = await this.prisma.voucherBatch.create({
+        data: {
+          name: dto.name,
+          batchSize: dto.batchSize,
+        },
+      });
+
+      if (!voucherBatch) return null;
+      for (let i = 0; i < dto.batchSize; i++) {
+        const voucher = await this.createVoucher({
+          gb: dto.gb,
+          price: dto.price,
+          expireDays: dto.expireDays,
+        });
+
+        if (voucher) {
+          await this.prisma.voucher.update({
+            where: { id: voucher.id },
+            data: {
+              voucherBatchId: voucherBatch.id,
+            },
+          });
+        }
+      }
+      const batchWithVouchers = await this.prisma.voucherBatch.findUnique({
+        where: { id: voucherBatch.id },
+        include: {
+          vouchers: true,
+        },
+      });
+
+      const batchVouchers = batchWithVouchers?.vouchers?.map((vo) => {
+        return {
+          ...vo,
+          dataCapBytes: Number(vo.dataCapBytes.toString()), // or use Number() if safe
+        };
+      });
+
+      return {
+        ...batchWithVouchers,
+        vouchers: batchVouchers,
+      };
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
+  }
 
   @Cron('*/10 * * * *') // every 10 minutes
   async disableUsedUpDataVouchers() {
@@ -194,7 +244,7 @@ export class AppService {
       const voucher = await this.prisma.voucher.create({
         data: {
           code,
-          dataCapBytes,
+          dataCapBytes: Math.floor(dataCapBytes),
           price: dto.price,
           timeCapSeconds: sessionInSeconds,
           isActive: true,

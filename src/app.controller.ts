@@ -10,6 +10,7 @@ import { AppService } from './app.service';
 import { CreateVoucherDto } from './dto/CreateVoucher.dto';
 import { GetVoucherDto } from './dto/GetVoucher.dto';
 import { PrismaService } from 'nestjs-prisma';
+import { CreateVoucherBatchDto } from './dto/VoucherBatchDto';
 
 @Controller()
 export class AppController {
@@ -97,6 +98,11 @@ export class AppController {
         };
       }),
     );
+  }
+
+  @Post('create-batch')
+  async createBatch(@Body() dto: CreateVoucherBatchDto) {
+    return this.appService.createBatch(dto);
   }
 
   @Post('vouchers')

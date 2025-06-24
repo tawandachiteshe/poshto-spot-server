@@ -126,13 +126,23 @@ model radusergroup {
 }
 
 model Voucher {
-  id             Int      @id @default(autoincrement())
-  code           String   @unique
+  id             Int           @id @default(autoincrement())
+  code           String        @unique
   dataCapBytes   BigInt
   price          Float
-  timeCapSeconds Int      @default(3600)
-  isActive       Boolean  @default(true)
-  expiry         DateTime @default(now())
-  expiryDays     Int      @default(0)
-  createdAt      DateTime @default(now())
+  timeCapSeconds Int           @default(3600)
+  isActive       Boolean       @default(true)
+  expiry         DateTime      @default(now())
+  expiryDays     Int           @default(0)
+  createdAt      DateTime      @default(now())
+  VoucherBatch   VoucherBatch? @relation(fields: [voucherBatchId], references: [id])
+  voucherBatchId Int?
+}
+
+model VoucherBatch {
+  id        Int       @id @default(autoincrement())
+  vouchers  Voucher[]
+  createdAt DateTime  @default(now())
+  batchSize Int
+  name String
 }
