@@ -19,6 +19,11 @@ export class AppController {
     private readonly prisma: PrismaService,
   ) {}
 
+  @Get('sessions')
+  async getActiveVoucherSessions() {
+    return this.appService.getActiveVoucherSessions();
+  }
+
   // Simpler: Expect username passed in headers or session (for MVP)
   @Get('my-usage')
   async getMyUsage(@Query('x-user') username: string) {

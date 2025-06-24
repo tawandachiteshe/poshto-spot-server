@@ -11,7 +11,78 @@ export class AppService {
   constructor(private prisma: PrismaService) {}
 
   private readonly logger = new Logger(AppService.name);
+  async getActiveVoucherSessions() {
+    const sessions = await this.prisma.radacct.findMany({
+      where: {
+        acctstoptime: null, // still active
+      },
+      select: {
+        username: true,
+        acctstarttime: true,
+        callingstationid: true, // MAC
+        framedipaddress: true, // IP
+        acctinputoctets: true,
+        acctoutputoctets: true,
+      },
+    });
 
+    // Group by voucher code (username)
+    const merged = sessions.reduce(
+      (acc, session) => {
+        const code = session.username;
+
+        if (!acc[code as keyof typeof acc]) {
+          acc[code as keyof typeof acc] = {
+            code: code as string,
+            totalData: BigInt(0),
+            sessions: [],
+          };
+        }
+
+        const sessionData =
+          BigInt(session.acctinputoctets ?? 0) +
+          BigInt(session.acctoutputoctets ?? 0);
+
+        acc[code as keyof typeof acc].sessions.push({
+          startTime: session.acctstarttime as Date,
+          ip: session.framedipaddress as string,
+          mac: session.callingstationid as string,
+          dataUsed: sessionData,
+        });
+
+        acc[code as keyof typeof acc].totalData += sessionData;
+
+        return acc;
+      },
+      {} as Record<
+        string,
+        {
+          code: string;
+          totalData: bigint;
+          sessions: {
+            startTime: Date;
+            ip: string;
+            mac: string;
+            dataUsed: bigint;
+          }[];
+        }
+      >,
+    );
+
+    // Convert BigInt → string + Date → ISO string
+    const result = Object.values(merged).map((v) => ({
+      code: v.code,
+      totalData: v.totalData.toString(),
+      sessions: v.sessions.map((s) => ({
+        startTime: s.startTime.toISOString(),
+        ip: s.ip,
+        mac: s.mac,
+        dataUsed: s.dataUsed.toString(),
+      })),
+    }));
+
+    return result;
+  }
   async createBatch(dto: CreateVoucherBatchDto) {
     try {
       const voucherBatch = await this.prisma.voucherBatch.create({
