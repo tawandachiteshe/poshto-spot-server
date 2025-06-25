@@ -49,6 +49,7 @@ export class AppController {
 
     const voucher = await this.prisma.voucher.findFirst({
       where: { code: username },
+      include: { VoucherBatch: true },
     });
 
     if (!voucher) return;
@@ -61,6 +62,9 @@ export class AppController {
       sessionTime: usage._sum.acctsessiontime?.toString() || '0',
       lastSeen: usage._max.acctstarttime?.toString(),
       expiryDate: voucher.expiry.toString(),
+      batchCode: voucher.voucherBatchId,
+      voucherId: voucher.id,
+      voucherBatchName: voucher.VoucherBatch?.name,
     };
   }
 
@@ -87,8 +91,18 @@ export class AppController {
 
         const usedTime = usage._sum.acctsessiontime || 0;
 
+        const voucher = await this.prisma.voucher.findUnique({
+          where: {
+            code: v.code,
+          },
+          include: { VoucherBatch: true },
+        });
+
         return {
           code: v.code,
+          voucherId: voucher?.id,
+          voucherBatchId: voucher?.voucherBatchId,
+          voucherBatchName: voucher?.VoucherBatch?.name,
           isActive: v.isActive,
           dataCap: v.dataCapBytes.toString(),
           usedData: usedData.toString(),
