@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
 import { CreateVoucherDto } from './dto/CreateVoucher.dto';
 import { Prisma } from '@prisma/client';
@@ -178,6 +178,26 @@ export class AppService {
         );
       }
     }
+  }
+
+  async addExpiryDate(code: string) {
+    const voucher = await this.prisma.voucher.findUnique({
+      where: {
+        code: code,
+      },
+    });
+
+    if (!voucher) {
+      throw new NotFoundException('Voucher not found');
+    }
+    const expiration = dayjs(new Date()).add(+voucher.expiryDays, 'day'); // Expire afte
+
+    const updateVoucher = await this.prisma.voucher.update({
+      where: { code },
+      data: { expiry: expiration.toISOString() },
+    });
+
+    return updateVoucher;
   }
 
   @Cron(CronExpression.EVERY_10_MINUTES) // or EVERY_HOUR / EVERY_DAY_AT_MIDNIGHT

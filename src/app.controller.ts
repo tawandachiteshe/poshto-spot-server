@@ -24,6 +24,11 @@ export class AppController {
     return this.appService.getActiveVoucherSessions();
   }
 
+  @Get('check')
+  async check(@Query('code') code: string) {
+    return this.appService.addExpiryDate(code);
+  }
+
   // Simpler: Expect username passed in headers or session (for MVP)
   @Get('my-usage')
   async getMyUsage(@Query('x-user') username: string) {
