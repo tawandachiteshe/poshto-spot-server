@@ -201,6 +201,7 @@ export class AppService {
     const expiredVouchers = await this.prisma.voucher.findMany({
       where: {
         isActive: false,
+        firstUsed: { not: null },
         expiry: { lt: now },
       },
       select: { code: true },
