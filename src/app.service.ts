@@ -184,6 +184,7 @@ export class AppService {
     const voucher = await this.prisma.voucher.findUnique({
       where: {
         code: code,
+        firstUsed: { equals: null },
       },
     });
 
