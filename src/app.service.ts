@@ -189,7 +189,7 @@ export class AppService {
     });
 
     if (!voucher) {
-      throw new NotFoundException('Voucher not found');
+      return null;
     }
     const expiration = dayjs(new Date()).add(+voucher.expiryDays, 'day'); // Expire afte
 
