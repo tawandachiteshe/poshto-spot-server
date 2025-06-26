@@ -194,7 +194,10 @@ export class AppService {
 
     const updateVoucher = await this.prisma.voucher.update({
       where: { code },
-      data: { expiry: expiration.toISOString() },
+      data: {
+        expiry: expiration.toISOString(),
+        firstUsed: dayjs().toISOString(),
+      },
     });
 
     return updateVoucher;
