@@ -233,9 +233,13 @@ export class AppService {
 
     await Promise.all(
       expiredVouchers.map((v) =>
-        this.prisma.radcheck.updateMany({
-          where: { username: v.code },
-          data: { attribute: 'Auth-Type', op: ':=', value: 'Reject' },
+        this.prisma.radcheck.create({
+          data: {
+            username: v.code,
+            attribute: 'Auth-Type',
+            op: ':=',
+            value: 'Reject',
+          },
         }),
       ),
     );
