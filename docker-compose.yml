@@ -8,10 +8,10 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.portal-backend.rule=Host(`portal-backend.umbiro.com`)"
       - "traefik.http.routers.portal-backend.entrypoints=websecure"
-      - "traefik.http.routers.portal-backend.tls.certresolver=myresolver"
+      - "traefik.http.routers.portal-backend.tls.certresolver=letsencrypt"
       - "traefik.http.services.portal-backend.loadbalancer.server.port=3005"
     networks:
-        - bans-network
+        - dokploy-network
 networks:
-  bans-network:
+  dokploy-network:
     external: true
