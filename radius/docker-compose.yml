@@ -13,7 +13,7 @@ services:
       # - ./radius-config:/etc/raddb
     restart: unless-stopped
     networks:
-      - bans-network
+      - dokploy-network
 networks:
   bans-network:
     external: true
