@@ -15,5 +15,5 @@ services:
     networks:
       - dokploy-network
 networks:
-  bans-network:
+  dokploy-network:
     external: true
